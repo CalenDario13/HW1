@@ -120,11 +120,46 @@ Output: smoothed image
 """
 def gaussianfilter(img, sigma):
     
-    #...
-
+    """
+    it implements a gaussian filter exploiting the linearity of the system,
+    namely decomposing it in 2 1D filters applied to the picture.
+    
+    :type img: array
+    :par img: the matrix which represents the picture
+    
+    :type sigma: float
+    :par sigma: the standard deviation of a Normal distribution
+    
+    """  
+    
+    # Generate the Kernel:
+    Gx, x = gauss(sigma)  
+    
+    # Adjust the size of the picture:
+    img = resize_img(img, Gx, axs = 1)
+    img = resize_img(img, Gx, axs = 0)
+    
+    # Convolve by rows
+    aw = (Gx.size - 1) / 2
+    filter1 = np.zeros( img.shape )
+    for n in range(img.shape[1]):
+        for m in range(int(img.shape[0] - aw)):
+            Fmn = 0
+            for j in range(Gx.size):
+                Fmn += Gx[j] * img[int(m + aw - j), n]
+            filter1[m, n] = Fmn
+            
+    # Convolve by cols:
+    aw = (Gx.size - 1) / 2
+    smooth_img = np.zeros( img.shape )
+    for n in range(int(img.shape[1] - aw)):
+        for m in range(img.shape[0]):
+            Fmn = 0
+            for j in range(Gx.size):
+                Fmn += Gx[j] * img[m, int(n + aw - j)]
+            smooth_img[m, n] = int(Fmn)
+            
     return smooth_img
-
-
 
 """
 Gaussian derivative function taking as argument the standard deviation sigma
