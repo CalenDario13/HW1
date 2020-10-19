@@ -39,6 +39,71 @@ def gauss(sigma):
     
     return Gx, x
 
+def resize_img(img, Gx, axs):
+    """
+    resize the img matrix to apply the 1D kernel on a given axis, 
+    axs 1 is to be adjusted for convolution along rows, while axs 0 must be adjusted
+    for convolution on columns.
+    
+    :type img: array
+    :par img: the matrix which represents the picture
+    
+    :type Gx: array
+    :par Gx: it is the array which contains the values of the kernel
+    
+    :type axs: int
+    :par axs: the axis on which the adjustment must be done (0: rows, 1: cols)
+    
+    """  
+    
+    # Define variables:
+    m = img.shape[0]
+    n = img.shape[1]
+    k = Gx.shape[0]  
+    
+    # Workout image:
+
+    if axs == 0:
+        
+        # Check if the size is correct or must be adjusted:
+        fit = m / k 
+        if fit.is_integer():
+            return img
+        else:
+            pxa = m - int(fit) * k
+            
+            # Do the adjustment:
+            if pxa % 2 == 0:
+                
+                zeros = np.zeros( (pxa/2, n) )
+                img = np.concatenate((zeros, img, zeros), axis=0)
+                
+            else:
+                
+                zeros_u = np.zeros( ( ( int( (pxa - 1)/2 ), n ) ) )
+                zeros_d = np.zeros( ( ( int( (pxa -1)/2 + 1), n ) ) )
+                img = np.concatenate((zeros_u, img, zeros_d), axis=0)
+            
+        if axs == 1:
+            
+            fit = n / k
+            if fit.is_integer():
+                return img
+            else:
+                pxa = n - int(fit) * k
+                
+                if pxa % 2 == 0:
+                    
+                    zeros = np.zeros( (m, pxa/2) )
+                    img = np.concatenate((zeros, img, zeros), axis=0)
+                    
+                else:
+                    
+                    zeros_l = np.zeros( ( ( m, int( (pxa - 1)/2 ) ) ) )
+                    zeros_r = np.zeros( ( ( m, int( (pxa -1)/2 + 1) ) ) )
+                    img = np.concatenate((zeros_l, img, zeros_r), axis=0)
+                
+    return img
 
 """
 Implement a 2D Gaussian filter, leveraging the previous gauss.
