@@ -70,12 +70,15 @@ def resize_img(img, Gx, axs):
         if fit.is_integer():
             return img
         else:
-            pxa = m - int(fit) * k
+            pxa = (k * (int(fit) + 1)) - m
+            
+            if pxa < 0:
+                raise TypeError("The function doesn't work properly")
             
             # Do the adjustment:
             if pxa % 2 == 0:
-                
-                zeros = np.zeros( (pxa/2, n) )
+            
+                zeros = np.zeros( (int(pxa/2), n) )
                 img = np.concatenate((zeros, img, zeros), axis=0)
                 
             else:
@@ -90,11 +93,14 @@ def resize_img(img, Gx, axs):
             if fit.is_integer():
                 return img
             else:
-                pxa = n - int(fit) * k
+                pxa = (k * (int(fit) + 1)) - n
+                
+                if pxa < 0:
+                    raise TypeError("The function doesn't work properly")
                 
                 if pxa % 2 == 0:
                     
-                    zeros = np.zeros( (m, pxa/2) )
+                    zeros = np.zeros( (m, int(pxa/2)) )
                     img = np.concatenate((zeros, img, zeros), axis=0)
                     
                 else:
