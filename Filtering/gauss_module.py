@@ -33,10 +33,6 @@ def gauss(sigma):
         g = t1 * t2
         Gx[x + m] = g
     
-    # Normalization
-    w = np.sum(Gx)
-    Gx = 1/w * Gx
-    
     return Gx, x
 
 def resize_img(img, Gx, axs):
@@ -136,6 +132,7 @@ def gaussianfilter(img, sigma):
     Gx, x = gauss(sigma)  
     
     # Adjust the size of the picture:
+    
     img = resize_img(img, Gx, axs = 1)
     img = resize_img(img, Gx, axs = 0)
     
@@ -146,7 +143,8 @@ def gaussianfilter(img, sigma):
         for m in range(int(img.shape[0] - aw)):
             Fmn = 0
             for j in range(Gx.size):
-                Fmn += Gx[j] * img[int(m + aw - j), n]
+                
+                Fmn += Gx[j] * img[int(m - j), n]
             filter1[m, n] = Fmn
             
     # Convolve by cols:
@@ -156,7 +154,7 @@ def gaussianfilter(img, sigma):
         for m in range(img.shape[0]):
             Fmn = 0
             for j in range(Gx.size):
-                Fmn += Gx[j] * img[m, int(n + aw - j)]
+                Fmn += Gx[j] * img[m, int(n - j)]
             smooth_img[m, n] = int(Fmn)
             
     return smooth_img
