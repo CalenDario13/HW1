@@ -67,7 +67,8 @@ def gaussdx(sigma):
         t2 = x * exp( -x**2 / (2 * sigma**2) )
         g = t1 * t2
         Dx[x + m] = g
-        
+    
+    #Normalization
     w = np.sum(Dx)
     Dx = 1/w * Dx
         
