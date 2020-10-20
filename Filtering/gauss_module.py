@@ -21,17 +21,17 @@ def gauss(sigma):
     """  
     
     #Set the Parameters:
-    X  = np.arange(-3*int(sigma), 3*int(sigma) + 1)
-    Gx = np.zeros(X.shape)
-    m = X.shape[0] // 2
+    x  = np.arange(-3*int(sigma), 3*int(sigma) + 1)
+    Gx = np.zeros(x.shape)
     
     # Build the array:
-    for x in range(-m, m+1):
+
+    for i in range(x.size):
 
         t1 = 1 / ( sigma * sqrt(2 * pi) )
-        t2 = exp( -x**2 / (2 * sigma**2) )
+        t2 = exp( -x[i]**2 / (2 * sigma**2) )
         g = t1 * t2
-        Gx[x + m] = g
+        Gx[i] = g
     
     return Gx, x
 
@@ -130,32 +130,30 @@ def gaussianfilter(img, sigma):
     
     # Generate the Kernel:
     Gx, x = gauss(sigma)  
+    cp = (Gx.size - 1) // 2
     
     # Adjust the size of the picture:
     
-    img = resize_img(img, Gx, axs = 1)
-    img = resize_img(img, Gx, axs = 0)
+    #img = resize_img(img, Gx, axs = 1)
+    #img = resize_img(img, Gx, axs = 0)
     
     # Convolve by rows
-    aw = (Gx.size - 1) / 2
     filter1 = np.zeros( img.shape )
     for n in range(img.shape[1]):
-        for m in range(int(img.shape[0] - aw)):
+        for m in range(img.shape[0] - cp):
             Fmn = 0
             for j in range(Gx.size):
-                
-                Fmn += Gx[j] * img[int(m - j), n]
+                Fmn += Gx[j] * img[m - cp + j, n]
             filter1[m, n] = Fmn
             
     # Convolve by cols:
-    aw = (Gx.size - 1) / 2
-    smooth_img = np.zeros( img.shape )
-    for n in range(int(img.shape[1] - aw)):
-        for m in range(img.shape[0]):
+    smooth_img = np.zeros(img.shape)
+    for m in range(img.shape[0]):
+        for n in range(img.shape[1] - cp):
             Fmn = 0
             for j in range(Gx.size):
-                Fmn += Gx[j] * img[m, int(n - j)]
-            smooth_img[m, n] = int(Fmn)
+                Fmn += Gx[j] * img[m, n -cp + j]
+            smooth_img[m, n] = Fmn
             
     return smooth_img
 
@@ -165,8 +163,24 @@ The filter should be defined for all integer values x in the range [-3sigma,3sig
 The function should return the Gaussian derivative values Dx computed at the indexes x
 """
 def gaussdx(sigma):
+    """
+    it generates the domain of the First Derivate of a Gaussina Function and its values.
+    
+    :type sigma: the standard deviation of the Normal distribution
+    :par sigma: float
+    
+    """ 
+    
+    #Set the Parameters:
+    x  = np.arange(-3*sigma, 3*sigma + 1)
+    Dx = np.zeros(x.size)
 
-    #...
+    # Build the array:
+    for i in range(x.size):
+        t1 = - (1 / ( (sigma**3) * sqrt(2*pi) ))
+        t2 = x[i] * exp( -x[i]**2 / (2 * sigma**2) )
+        g = t1 * t2
+        Dx[i] = g
     
     return Dx, x
 
