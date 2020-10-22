@@ -6,8 +6,6 @@ import matplotlib.pyplot as plt
 
 import gauss_module
 
-
-
 def rgb2gray(rgb):
 
     r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
@@ -25,7 +23,6 @@ sigma = 4.0
 plt.figure(1)
 plt.plot(x, Gx, '.-')
 plt.show()
-
 
 
 ## function gaussianfilter (Question 1.b)
@@ -71,6 +68,7 @@ sigma = 7.0
 Gx = Gx.reshape(1, Gx.size)
 Dx = Dx.reshape(1, Dx.size)
 
+
 plt.figure(7)
 plt.subplot(2,3,1)
 plt.imshow(conv2(conv2(img_imp, Gx, 'same'), Gx.T, 'same') , cmap='gray')
@@ -87,14 +85,13 @@ plt.imshow(conv2(conv2(img_imp, Gx.T, 'same'), Dx, 'same') , cmap='gray')
 plt.show()
 
 
-
 ## function gaussderiv (Question 1.e)
 
 img_c = np.array(Image.open('graf.png')).astype('double')
 img = rgb2gray(img_c)
 [imgDx, imgDy] = gauss_module.gaussderiv(img, 7.0)
 
-plt.figure(8)
+plt.figure(8, figsize = (20, 15))
 ax1 = plt.subplot(1,3,1)
 ax2 = plt.subplot(1,3,2)
 ax3 = plt.subplot(1,3,3)
