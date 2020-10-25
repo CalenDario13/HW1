@@ -19,15 +19,38 @@ import gauss_module
 #  img_gray - input image in grayscale format
 #  num_bins - number of bins in the histogram
 def normalized_hist(img_gray, num_bins):
+    
     assert len(img_gray.shape) == 2, 'image dimension mismatch'
     assert img_gray.dtype == 'float', 'incorrect image type'
+    
+    # Prepare the variables:
+    space = np.linspace(0, 255, num_bins + 1)
+    to_array = img_gray.reshape(img_gray.size)
+    
+    # Do the binning:         
+    binning = np.digitize(to_array, space)
+    img_binned = space[binning]
+    
+    # Create the histogram.
+    bins, hists = np.unique(img_binned, return_counts=True)
 
-
-    #... (your code here)
-
-
+    # Add the bins that count 0:
+    missing_bins = np.setdiff1d(space, bins)
+    missing_hists = np.zeros(missing_bins.shape)
+    
+    bins = np.concatenate((bins, missing_bins))
+    hists = np.concatenate((hists, missing_hists))
+        
+    idx = bins.argsort()
+    bins = bins[idx]
+    hists = hists[idx]
+    hists = hists[1:]
+    
+    # Normalization:
+    d = np.product(img_gray.shape)
+    hists = 1/d * hists
+    
     return hists, bins
-
 
 
 #  Compute the *joint* histogram for each color channel in the image
