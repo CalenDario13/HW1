@@ -70,17 +70,11 @@ Dx = Dx.reshape(1, Dx.size)
 
 
 plt.figure(7)
-plt.subplot(2,3,1)
 plt.imshow(conv2(conv2(img_imp, Gx, 'same'), Gx.T, 'same') , cmap='gray')
-plt.subplot(2,3,2)
 plt.imshow(conv2(conv2(img_imp, Gx, 'same'), Dx.T, 'same') , cmap='gray')
-plt.subplot(2,3,3)
 plt.imshow(conv2(conv2(img_imp, Dx.T, 'same'), Gx, 'same') , cmap='gray')
-plt.subplot(2,3,4)
 plt.imshow(conv2(conv2(img_imp, Dx, 'same'), Dx.T, 'same') , cmap='gray')
-plt.subplot(2,3,5)
 plt.imshow(conv2(conv2(img_imp, Dx, 'same'), Gx.T, 'same') , cmap='gray')
-plt.subplot(2,3,6)
 plt.imshow(conv2(conv2(img_imp, Gx.T, 'same'), Dx, 'same') , cmap='gray')
 plt.show()
 
