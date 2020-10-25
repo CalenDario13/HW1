@@ -47,8 +47,7 @@ def normalized_hist(img_gray, num_bins):
     hists = hists[1:]
     
     # Normalization:
-    d = np.product(img_gray.shape)
-    hists = 1/d * hists
+    hists = 1/num_bins * hists
     
     return hists, bins
 
