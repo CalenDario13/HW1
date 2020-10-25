@@ -19,16 +19,12 @@ def rgb2gray(rgb):
     return gray
 
 
-
-
-
-
 ## gray-value histograms (Question 2.a)
 
 img_color = np.array(Image.open('./model/obj100__0.png'))
 img_gray = rgb2gray(img_color.astype('double'))
 
-plt.figure(1)
+plt.figure(1, figsize=(22,10))
 plt.subplot(1,3,1)
 plt.imshow(img_color)
 
