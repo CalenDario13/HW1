@@ -19,15 +19,37 @@ import gauss_module
 #  img_gray - input image in grayscale format
 #  num_bins - number of bins in the histogram
 def normalized_hist(img_gray, num_bins):
+    
     assert len(img_gray.shape) == 2, 'image dimension mismatch'
     assert img_gray.dtype == 'float', 'incorrect image type'
+    
+    # Prepare the variables:
+    space = np.linspace(0, 255, num_bins + 1)
+    to_array = img_gray.reshape(img_gray.size)
+    
+    # Do the binning:         
+    binning = np.digitize(to_array, space)
+    img_binned = space[binning]
+    
+    # Create the histogram.
+    bins, hists = np.unique(img_binned, return_counts=True)
 
-
-    #... (your code here)
-
-
+    # Add the bins that count 0:
+    missing_bins = np.setdiff1d(space, bins)
+    missing_hists = np.zeros(missing_bins.shape)
+    
+    bins = np.concatenate((bins, missing_bins))
+    hists = np.concatenate((hists, missing_hists))
+        
+    idx = bins.argsort()
+    bins = bins[idx]
+    hists = hists[idx]
+    hists = hists[1:]
+    
+    # Normalization:
+    hists = (1/np.sum(hists)) * hists
+    
     return hists, bins
-
 
 
 #  Compute the *joint* histogram for each color channel in the image
@@ -41,32 +63,47 @@ def normalized_hist(img_gray, num_bins):
 #       - their R values fall in bin 0
 #       - their G values fall in bin 9
 #       - their B values fall in bin 5
+
 def rgb_hist(img_color_double, num_bins):
+    
     assert len(img_color_double.shape) == 3, 'image dimension mismatch'
     assert img_color_double.dtype == 'float', 'incorrect image type'
-
-
-    #... (your code here)
-
+    
+    flat = img_color_double.reshape(-1, 3)
+    bins = np.linspace(0, 255, num_bins + 1)
 
     #Define a 3D histogram  with "num_bins^3" number of entries
     hists = np.zeros((num_bins, num_bins, num_bins))
     
     # Loop for each pixel i in the image 
     for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
-        # Increment the histogram bin which corresponds to the R,G,B value of the pixel i
         
-        #... (your code here)
-        pass
+        r = flat[i][0]
+        g = flat[i][1]
+        b = flat[i][2]
+        
+        # Increment the histogram bin which corresponds to the R,G,B value of the pixel i
+        idx = np.zeros(3, dtype=int)
+        for j in range(bins.size):
+        
+            if bins[j] <= r < bins[j + 1]:
+                idx[0] = j
+            if bins[j] <= g < bins[j + 1]:
+                idx[1] = j
+            if bins[j] <= b < bins[j + 1]:
+                idx[2] = j
+                
+        hists[idx[0], idx[1], idx[2]] += 1
 
-
+       
     #Normalize the histogram such that its integral (sum) is equal 1
-    #... (your code here)
+    
+    hists = 1/np.sum(hists) * hists
 
     #Return the histogram as a 1D vector
     hists = hists.reshape(hists.size)
+    
     return hists
-
 
 
 #  Compute the *joint* histogram for the R and G color channels in the image
@@ -79,26 +116,44 @@ def rgb_hist(img_color_double, num_bins):
 #  E.g. hists[0,9] contains the number of image_color pixels such that:
 #       - their R values fall in bin 0
 #       - their G values fall in bin 9
+
 def rg_hist(img_color_double, num_bins):
+    
     assert len(img_color_double.shape) == 3, 'image dimension mismatch'
     assert img_color_double.dtype == 'float', 'incorrect image type'
-
-
-    #... (your code here)
-
+    
+    flat = img_color_double.reshape(-1, 3)
+    bins = np.linspace(0, 255, num_bins + 1)
 
     #Define a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
     
-    
-    #... (your code here)
+    # Loop for each pixel i in the image 
+    for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
+        
+        r = flat[i][0]
+        g = flat[i][1]
+        
+        # Increment the histogram bin which corresponds to the R and G value of the pixel i
+        idx = np.zeros(2, dtype=int)
+        for j in range(bins.size):
+        
+            if bins[j] <= r < bins[j + 1]:
+                idx[0] = j
+            if bins[j] <= g < bins[j + 1]:
+                idx[1] = j
 
+                
+        hists[idx[0], idx[1]] += 1
+
+       
+    #Normalize the histogram such that its integral (sum) is equal 1
+    hists = 1/np.sum(hists) * hists
 
     #Return the histogram as a 1D vector
     hists = hists.reshape(hists.size)
-
+    
     return hists
-
 
 
 
@@ -151,4 +206,3 @@ def get_hist_by_name(img, num_bins_gray, hist_name):
     return dxdy_hist(img, num_bins_gray)
   else:
     assert False, 'unknown distance: %s'%hist_name
-
