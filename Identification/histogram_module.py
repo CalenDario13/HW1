@@ -47,7 +47,7 @@ def normalized_hist(img_gray, num_bins):
     hists = hists[1:]
     
     # Normalization:
-    hists = 1/num_bins * hists
+    hists = (1/np.sum(hists)) * hists
     
     return hists, bins
 
@@ -91,14 +91,17 @@ def rgb_hist(img_color_double, num_bins):
                 idx[1] = j
             if bins[j] <= g < bins[j + 1]:
                 idx[2] = j
-        
-        hists[idx] += 1
+                
+        hists[idx[0], idx[1], idx[2]] += 1
 
+       
     #Normalize the histogram such that its integral (sum) is equal 1
-    hists = 1/(num_bins**3) * hists
+    
+    hists = 1/np.sum(hists) * hists
 
     #Return the histogram as a 1D vector
     hists = hists.reshape(hists.size)
+    
     return hists
 
 
@@ -116,16 +119,14 @@ def rgb_hist(img_color_double, num_bins):
 def rg_hist(img_color_double, num_bins):
     assert len(img_color_double.shape) == 3, 'image dimension mismatch'
     assert img_color_double.dtype == 'float', 'incorrect image type'
-
-
-    #... (your code here)
-
-
+    
+    bins = np.linspace(0, 255, num_bins + 1)
+    
     #Define a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
     
     
-    #... (your code here)
+
 
 
     #Return the histogram as a 1D vector
