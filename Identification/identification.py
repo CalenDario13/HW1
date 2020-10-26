@@ -19,16 +19,12 @@ def rgb2gray(rgb):
     return gray
 
 
-
-
-
-
 ## gray-value histograms (Question 2.a)
 
-img_color = np.array(Image.open('./model/obj100__0.png'))
+img_color = np.array(Image.open('./model/obj62__0.png'))
 img_gray = rgb2gray(img_color.astype('double'))
 
-plt.figure(1)
+plt.figure(1, figsize=(22,10))
 plt.subplot(1,3,1)
 plt.imshow(img_color)
 
@@ -221,4 +217,3 @@ plt.figure(10)
 rpc_module.compare_dist_rpc(model_images, query_images, ['chi2', 'intersect', 'l2'], 'dxdy', num_bins, ['r', 'g', 'b'])
 plt.title('dx/dy histograms')
 plt.show()
-
