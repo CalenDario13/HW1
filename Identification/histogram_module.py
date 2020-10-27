@@ -167,7 +167,7 @@ def dxdy_hist(img_gray, num_bins):
     flat[flat < -6] = -6
     
     # Get the bin_size:
-    bin_size = len(range(-6, 6 + 1)) / 10
+    bin_size = len(range(-6, 6 + 1)) / num_bins
     
     #Define a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
