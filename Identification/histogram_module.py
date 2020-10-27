@@ -68,8 +68,9 @@ def rgb_hist(img_color_double, num_bins):
     assert len(img_color_double.shape) == 3, 'image dimension mismatch'
     assert img_color_double.dtype == 'float', 'incorrect image type'
     
+    # Iniitilize vars:
     flat = img_color_double.reshape(-1, 3)
-    bins = np.linspace(0, 255, num_bins + 1)
+    bin_size = 256 // num_bins
 
     #Define a 3D histogram  with "num_bins^3" number of entries
     hists = np.zeros((num_bins, num_bins, num_bins))
@@ -77,26 +78,20 @@ def rgb_hist(img_color_double, num_bins):
     # Loop for each pixel i in the image 
     for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
         
-        r = flat[i][0]
-        g = flat[i][1]
-        b = flat[i][2]
+        # Get the pixels:
+        R = flat[i][0]
+        B = flat[i][1]
+        G = flat[i][2]
         
-        # Increment the histogram bin which corresponds to the R,G,B value of the pixel i
-        idx = np.zeros(3, dtype=int)
-        for j in range(bins.size):
+        #Find the bin:
+        idxr = int(R / bin_size)
+        idxb = int(B / bin_size)
+        idxg = int(G / bin_size)
         
-            if bins[j] <= r < bins[j + 1]:
-                idx[0] = j
-            if bins[j] <= b < bins[j + 1]:
-                idx[1] = j
-            if bins[j] <= g < bins[j + 1]:
-                idx[2] = j
-                
-        hists[idx[0], idx[1], idx[2]] += 1
-
-       
+        # Increase by 1 the given position in hist:
+        hists[idxr, idxb, idxg] += 1
+          
     #Normalize the histogram such that its integral (sum) is equal 1
-    
     hists = 1/np.sum(hists) * hists
 
     #Return the histogram as a 1D vector
@@ -115,12 +110,12 @@ def rgb_hist(img_color_double, num_bins):
 #       - their R values fall in bin 0
 #       - their G values fall in bin 9
 def rg_hist(img_color_double, num_bins):
-    '''
+    
     assert len(img_color_double.shape) == 3, 'image dimension mismatch'
     assert img_color_double.dtype == 'float', 'incorrect image type'
     
     flat = img_color_double.reshape(-1, 3)
-    bins = np.linspace(0, 1, num_bins + 1)
+    bin_size = 256 // num_bins
 
     #Define a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
@@ -128,59 +123,17 @@ def rg_hist(img_color_double, num_bins):
     # Loop for each pixel i in the image 
     for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
         
+        # Get the pixels:
         R = flat[i][0]
-        G = flat[i][1]
-        B = flat[i][2]
+        G = flat[i][2]
         
-        I = R + G + B
-        
-        r = R/I
-        g = G/I
+        #Find the bin:
+        idxr = int(R / bin_size)
+        idxg = int(G / bin_size)
         
         # Increment the histogram bin which corresponds to the R and G value of the pixel i
-        idx = np.zeros(2, dtype=int)
-        for j in range(bins.size):
-        
-            if bins[j] <= r < bins[j + 1]:
-                idx[0] = j
-            if bins[j] <= g < bins[j + 1]:
-                idx[1] = j
-                
-        hists[idx[0], idx[1]] += 1
+        hists[idxr, idxg] += 1
 
-       
-    #Normalize the histogram such that its integral (sum) is equal 1
-    hists = 1/np.sum(hists) * hists
-
-    #Return the histogram as a 1D vector
-    hists = hists.reshape(hists.size)
-    '''
-    
-    flat = img_color_double.reshape(-1, 3)
-    bins = np.linspace(0, 255, num_bins + 1)
-
-    #Define a 2D histogram  with "num_bins^2" number of entries
-    hists = np.zeros((num_bins, num_bins))
-    
-    # Loop for each pixel i in the image 
-    for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
-        
-        r = flat[i][0]
-        g = flat[i][1]
-        
-        # Increment the histogram bin which corresponds to the R and G value of the pixel i
-        idx = np.zeros(2, dtype=int)
-        for j in range(bins.size):
-        
-            if bins[j] <= r < bins[j + 1]:
-                idx[0] = j
-            if bins[j] <= g < bins[j + 1]:
-                idx[1] = j
-
-                
-        hists[idx[0], idx[1]] += 1
-
-       
     #Normalize the histogram such that its integral (sum) is equal 1
     hists = 1/np.sum(hists) * hists
 
