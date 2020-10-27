@@ -1,6 +1,6 @@
 import numpy as np
 import math
-
+from scipy.spatial import distance
 
 
 # Compute the intersection distance between histograms x and y
@@ -8,18 +8,30 @@ import math
 # Check that the distance range in [0,1]
 
 def dist_intersect(x,y):
+    minima = np.minimum(x, y)
+    hist_intersect = np.sum(minima)
+    # res = 1 - hist_intersect
     
-    #... (your code here)
-
-
+    # Normalization
+    a = hist_intersect / np.sum(x)
+    b = hist_intersect / np.sum(y)
+    norm_hist = 0.5 * (a + b)
+    res = 1 - norm_hist
+    return res
+    
+  
 
 # Compute the L2 distance between x and y histograms
 # Check that the distance range in [0,sqrt(2)]
 
 def dist_l2(x,y):
     
-    #... (your code here)
-
+    # distance.euclidean(x,y)
+    diff = y - x
+    power = diff**2
+    summ = np.sum(power)
+    res = math.sqrt(summ)
+    return res
 
 
 # Compute chi2 distance between x and y
@@ -28,10 +40,14 @@ def dist_l2(x,y):
 
 def dist_chi2(x,y):
     
-    #... (your code here)
+    diff = x - y
+    power = diff**2
+    summ = x + y
+    div = power / summ
+    res = np.sum(div)
+    return res
 
-
-
+    
 def get_dist_by_name(x, y, dist_name):
   if dist_name == 'chi2':
     return dist_chi2(x,y)
