@@ -80,16 +80,16 @@ def rgb_hist(img_color_double, num_bins):
         
         # Get the pixels:
         R = flat[i][0]
-        B = flat[i][1]
         G = flat[i][2]
+        B = flat[i][1]
         
         #Find the bin:
         idxr = int(R / bin_size)
-        idxb = int(B / bin_size)
         idxg = int(G / bin_size)
-        
+        idxb = int(B / bin_size)
+      
         # Increase by 1 the given position in hist:
-        hists[idxr, idxb, idxg] += 1
+        hists[idxr, idxg, idxb] += 1
           
     #Normalize the histogram such that its integral (sum) is equal 1
     hists = 1/np.sum(hists) * hists
@@ -158,39 +158,34 @@ def dxdy_hist(img_gray, num_bins):
     
     # Get the Derivatives:
     sigma = 3.
-    imgdx, imgdy = gauss_module.gaussderiv(img_gray, sigma)
+    imgdx, imgdy = gauss_module.gaussderiv(img_gray, sigma)    
+    imgd = np.stack([imgdx,imgdy], axis=0)
+    flat = imgd.reshape(-1, 2)
     
     # Cap the values:
-    imgdx[imgdx > 6] = 6
-    imgdx[imgdx < -6] = -6
-    imgdx[imgdy > 6] = 6
-    imgdx[imgdy < -6] = -6
+    imgd[imgd > 6] = 6
+    imgd[imgd < -6] = -6
     
-    
-    # Prepare the array:
-       
-    der = np.stack([imgdx,imgdy], axis=0)
-    der = der.reshape(-1, 2)
-    bins = np.linspace(-6, 6, num_bins + 1)
+    # Get the bin_size:
+    bin_size = len(range(-6, 6 + 1)) // num_bins
     
     #Define a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
     
     # Fill the histogram:
-    for i in range(der.shape[0]):
-        x = der[i][0]
-        y = der[i][1]
+    for i in range(img_gray.shape[0]*img_gray.shape[1]):
         
-        idx = np.zeros(2, dtype=int)
-        for j in range(bins.size - 1):
-       
-            if bins[j] <= x < bins[j + 1]:
-                idx[0] = j
-            if bins[j] <= y < bins[j + 1]:
-                idx[1] = j
+        # Get the pixels
+        x = flat[i][0]
+        y = flat[i][1]
         
+        #Find the bin:
+        idxx = int(x / bin_size)
+        idxy = int(y / bin_size)
     
-        hists[idx[0], idx[1]] += 1
+        # Increase by 1 the given position of hist:
+        
+        hists[idxx, idxy] += 1
     
     # Normalize hist:
     hists = 1/np.sum(hists) * hists   
@@ -198,7 +193,6 @@ def dxdy_hist(img_gray, num_bins):
     #Return the histogram as a 1D vector
     hists = hists.reshape(hists.size)
     
-
     return hists
 
 
