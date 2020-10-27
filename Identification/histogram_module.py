@@ -104,8 +104,6 @@ def rgb_hist(img_color_double, num_bins):
     
     return hists
 
-
-
 #  Compute the *joint* histogram for the R and G color channels in the image
 #  The histogram should be normalized so that sum of all values equals 1
 #  Assume that values in each channel vary between 0 and 255
@@ -117,24 +115,47 @@ def rgb_hist(img_color_double, num_bins):
 #       - their R values fall in bin 0
 #       - their G values fall in bin 9
 def rg_hist(img_color_double, num_bins):
+    
     assert len(img_color_double.shape) == 3, 'image dimension mismatch'
     assert img_color_double.dtype == 'float', 'incorrect image type'
     
-    bins = np.linspace(0, 255, num_bins + 1)
-    
+    flat = img_color_double.reshape(-1, 3)
+    bins = np.linspace(0, 1, num_bins + 1)
+
     #Define a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
     
-    
+    # Loop for each pixel i in the image 
+    for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
+        
+        R = flat[i][0]
+        G = flat[i][1]
+        B = flat[i][2]
+        
+        I = R + G + B
+        
+        r = R/I
+        g = G/I
+        
+        # Increment the histogram bin which corresponds to the R and G value of the pixel i
+        idx = np.zeros(2, dtype=int)
+        for j in range(bins.size):
+        
+            if bins[j] <= r < bins[j + 1]:
+                idx[0] = j
+            if bins[j] <= g < bins[j + 1]:
+                idx[1] = j
+                
+        hists[idx[0], idx[1]] += 1
 
-
+       
+    #Normalize the histogram such that its integral (sum) is equal 1
+    hists = 1/np.sum(hists) * hists
 
     #Return the histogram as a 1D vector
     hists = hists.reshape(hists.size)
-
+    
     return hists
-
-
 
 
 #  Compute the *joint* histogram of Gaussian partial derivatives of the image in x and y direction
@@ -146,22 +167,55 @@ def rg_hist(img_color_double, num_bins):
 #
 #  Note: you may use the function gaussderiv from the Filtering exercise (gauss_module.py)
 def dxdy_hist(img_gray, num_bins):
+    
     assert len(img_gray.shape) == 2, 'image dimension mismatch'
     assert img_gray.dtype == 'float', 'incorrect image type'
-
-
-    #... (your code here)
-
-
+    
+    # Get the Derivatives:
+    sigma = 3.
+    imgdx, imgdy = gauss_module.gaussderiv(img_gray, sigma)
+    
+    # Cap the values:
+    imgdx[imgdx > 6] = 0
+    imgdx[imgdx < -6] = 0
+    imgdx[imgdy > 6] = 0
+    imgdx[imgdy < -6] = 0
+    
+    
+    # Prepare the array:
+       
+    der = np.stack([imgdx,imgdy], axis=0)
+    der = der.reshape(-1, 2)
+    bins = np.linspace(-6, 6, num_bins + 1)
+    
     #Define a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
-
-
-    #... (your code here)
-
-
+    
+    # Fill the histogram:
+    for i in range(der.shape[0]):
+        x = der[i][0]
+        y = der[i][1]
+        
+        idx = np.zeros(2, dtype=int)
+        for j in range(bins.size - 1):
+       
+            if bins[j] <= x < bins[j + 1]:
+                idx[0] = j
+            if bins[j] <= y < bins[j + 1]:
+                idx[1] = j
+        
+    
+        hists[idx[0], idx[1]] += 1
+    
+    # Normalize hist:
+    hists = 1/np.sum(hists) * hists   
+    
     #Return the histogram as a 1D vector
     hists = hists.reshape(hists.size)
+    
+    
+    
+    
     return hists
 
 
