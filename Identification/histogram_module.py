@@ -70,7 +70,7 @@ def rgb_hist(img_color_double, num_bins):
     
     # Iniitilize vars:
     flat = img_color_double.reshape(-1, 3)
-    bin_size = 256 // num_bins
+    bin_size = 255 / num_bins
 
     #Define a 3D histogram  with "num_bins^3" number of entries
     hists = np.zeros((num_bins, num_bins, num_bins))
@@ -115,7 +115,7 @@ def rg_hist(img_color_double, num_bins):
     assert img_color_double.dtype == 'float', 'incorrect image type'
     
     flat = img_color_double.reshape(-1, 3)
-    bin_size = 256 // num_bins
+    bin_size = 255 / num_bins
 
     #Define a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
@@ -163,15 +163,15 @@ def dxdy_hist(img_gray, num_bins):
     flat = imgd.reshape(-1, 2)
     
     # Cap the values:
-    imgd[imgd > 6] = 6
-    imgd[imgd < -6] = -6
+    flat[flat > 6] = 6
+    flat[flat < -6] = -6
     
     # Get the bin_size:
-    bin_size = len(range(-6, 6 + 1)) // num_bins
+    bin_size = len(range(-6, 6 + 1)) / 10
     
     #Define a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
-    
+ 
     # Fill the histogram:
     for i in range(img_gray.shape[0]*img_gray.shape[1]):
         
@@ -180,9 +180,9 @@ def dxdy_hist(img_gray, num_bins):
         y = flat[i][1]
         
         #Find the bin:
-        idxx = int(x / bin_size)
-        idxy = int(y / bin_size)
-    
+        idxx = num_bins // 2 + int(x / bin_size) 
+        idxy =  num_bins // 2 + int(y / bin_size) 
+
         # Increase by 1 the given position of hist:
         
         hists[idxx, idxy] += 1
