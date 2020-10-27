@@ -43,7 +43,7 @@ def dist_chi2(x,y):
     diff = x - y
     power = diff**2
     summ = x + y
-    div = power / summ
+    div = power / (summ + 1)
     res = np.sum(div)
     return res
 
