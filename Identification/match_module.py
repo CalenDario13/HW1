@@ -26,28 +26,43 @@ def rgb2gray(rgb):
 
 def find_best_match(model_images, query_images, dist_type, hist_type, num_bins):
 
-    hist_isgray = histogram_module.is_grayvalue_hist(hist_type)
+    hist_isgray = histogram_module.is_grayvalue_hist(hist_type) 
     
     model_hists = compute_histograms(model_images, hist_type, hist_isgray, num_bins)
     query_hists = compute_histograms(query_images, hist_type, hist_isgray, num_bins)
     
     D = np.zeros((len(model_images), len(query_images)))
+    for j in range(len(query_images)):
+        for i in range(len(model_images)):
+            dist = dist_module.get_dist_by_name(query_hists[j], model_hists[i], dist_type)
+            D[i, j] = dist
     
-    
-    #... (your code here)
-
+    # Find best matches:
+    minimums = D.min(axis = 0)
+    results = np.where(D == minimums) 
+    best_match = list(zip(results[0], results[1]))
+    best_match = sorted(best_match, key = lambda tpl: tpl[1])
 
     return best_match, D
 
-
-
+    
 def compute_histograms(image_list, hist_type, hist_isgray, num_bins):
     
     image_hist = []
 
     # Compute hisgoram for each image and add it at the bottom of image_hist
 
-    #... (your code here)
+    for img_name in image_list:
+        
+        # Load the image:
+        img = np.array(Image.open(img_name)).astype('double')
+        if hist_isgray:
+            img = rgb2gray(img)
+        
+        # Compute the given histogram and append:
+        hists = histogram_module.get_hist_by_name(img, num_bins, hist_type)
+        image_hist.insert(0, hists)
+       
 
     return image_hist
 
