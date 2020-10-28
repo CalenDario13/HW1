@@ -38,11 +38,8 @@ def find_best_match(model_images, query_images, dist_type, hist_type, num_bins):
             D[i, j] = dist
     
     # Find best matches:
-    minimums = D.min(axis = 0)
-    results = np.where(D == minimums) 
-    best_match = list(zip(results[0], results[1]))
-    best_match = sorted(best_match, key = lambda tpl: tpl[1])
-
+    best_match = np.argpartition(D, 1, axis=0)[0, :].reshape(-1)
+    
     return best_match, D
 
     
@@ -61,7 +58,7 @@ def compute_histograms(image_list, hist_type, hist_isgray, num_bins):
         
         # Compute the given histogram and append:
         hists = histogram_module.get_hist_by_name(img, num_bins, hist_type)
-        image_hist.insert(0, hists)
+        image_hist.append(hists)
        
 
     return image_hist
@@ -75,10 +72,29 @@ def compute_histograms(image_list, hist_type, hist_isgray, num_bins):
 
 def show_neighbors(model_images, query_images, dist_type, hist_type, num_bins):
     
-    
-    plt.figure()
-
     num_nearest = 5  # show the top-5 neighbors
+   
+    [best_match, D] = find_best_match(model_images, query_images, dist_type, hist_type, num_bins)
     
-    #... (your code here)
-
+    
+    fig, axs = plt.subplots(len(query_images), num_nearest + 1, figsize=(15, 6), facecolor='w', edgecolor='k')
+    fig.subplots_adjust(hspace = .5, wspace=.001)
+    
+    # Find index of closest images from the query (each row is a query):
+    top = np.argsort(D.T, axis=1)[:, :num_nearest]
+    
+    # Plot
+    for i in range(len(query_images)):
+        
+        query_img = np.array(Image.open(query_images[i]))
+        axs[i,0].imshow(query_img, vmin=0, vmax=255)
+        axs[i,0].set_title(' '.join(['Q', str(i)]))
+        
+        for j in range(top.shape[1]):
+            idx = top[i, j]
+            neighbor_img = np.array(Image.open(model_images[idx]))
+            
+            axs[i,j + 1].imshow(neighbor_img, vmin=0, vmax=255)
+            axs[i,0].set_title()
+        
+    plt.show()
