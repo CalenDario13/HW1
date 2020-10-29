@@ -81,20 +81,25 @@ def show_neighbors(model_images, query_images, dist_type, hist_type, num_bins):
     fig.subplots_adjust(hspace = .5, wspace=.001)
     
     # Find index of closest images from the query (each row is a query):
-    top = np.argsort(D.T, axis=1)[:, :num_nearest]
+    top = np.argsort(D, axis=0)[:num_nearest, :]
     
     # Plot
     for i in range(len(query_images)):
         
         query_img = np.array(Image.open(query_images[i]))
         axs[i,0].imshow(query_img, vmin=0, vmax=255)
-        axs[i,0].set_title(' '.join(['Q', str(i)]))
+        axs[i,0].set_title(''.join(['Q', str(i)]))
+        axs[i,0].axis('off')
         
-        for j in range(top.shape[1]):
-            idx = top[i, j]
+        for j in range(top.shape[0]):
+            
+            idx = top[j, i]
             neighbor_img = np.array(Image.open(model_images[idx]))
             
             axs[i,j + 1].imshow(neighbor_img, vmin=0, vmax=255)
-            axs[i,0].set_title()
+            axs[i,j + 1].set_title(''.join(['M', str(round(D[idx, i], 2))]))
+            axs[i,j + 1].axis('off')
         
     plt.show()
+
+  
