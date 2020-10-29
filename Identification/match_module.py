@@ -97,7 +97,7 @@ def show_neighbors(model_images, query_images, dist_type, hist_type, num_bins):
             neighbor_img = np.array(Image.open(model_images[idx]))
             
             axs[i,j + 1].imshow(neighbor_img, vmin=0, vmax=255)
-            axs[i,j + 1].set_title(''.join(['M', str(round(D[idx, i], 2))]))
+            axs[i,j + 1].set_title('{0}{1:.2f}'.format('M', round(D[idx, i], 2)))
             axs[i,j + 1].axis('off')
         
     plt.show()
