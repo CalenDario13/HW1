@@ -8,8 +8,9 @@ import math
 # Check that the distance range in [0,1]
 
 def dist_intersect(x,y):
-    
-    #... (your code here)
+
+  intersection_min_holder=np.minimum(x,y)
+  return 1-np.sum(intersection_min_holder)
 
 
 
@@ -17,9 +18,8 @@ def dist_intersect(x,y):
 # Check that the distance range in [0,sqrt(2)]
 
 def dist_l2(x,y):
-    
-    #... (your code here)
-
+  intersection_min_holder = np.power(np.subtract(x,y),2)
+  return np.sum(intersection_min_holder)
 
 
 # Compute chi2 distance between x and y
@@ -27,10 +27,12 @@ def dist_l2(x,y):
 # Add a minimum score to each cell of the histograms (e.g. 1) to avoid division by 0
 
 def dist_chi2(x,y):
-    
-    #... (your code here)
-
-
+  diff = x - y
+  power = diff ** 2
+  summ = x + y
+  div = power / (summ + 1)
+  res = np.sum(div)
+  return res
 
 def get_dist_by_name(x, y, dist_name):
   if dist_name == 'chi2':

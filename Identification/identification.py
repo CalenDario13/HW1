@@ -184,6 +184,7 @@ match_module.show_neighbors(model_images, query_images_vis, dist_type, hist_type
 
 ## compute recognition percentage (Question 3.c)
 # import ipdb; ipdb.set_trace()
+
 num_correct = sum( best_match == range(len(query_images)) )
 print('number of correct matches: %d (%f)\n'% (num_correct, 1.0 * num_correct / len(query_images)))
 
