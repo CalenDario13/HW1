@@ -1,6 +1,4 @@
 import numpy as np
-from numpy import histogram as hist
-
 
 
 #Add the Filtering folder, to import the gauss_module.py file, where gaussderiv is defined (needed for dxdy_hist)
@@ -180,8 +178,8 @@ def dxdy_hist(img_gray, num_bins):
         y = flat[i][1]
         
         #Find the bin:
-        idxx = (num_bins + 1) // 2 + int(x // bin_size)
-        idxy = (num_bins + 1) // 2 + int(y // bin_size)
+        idxx = num_bins // 2 + int(x // bin_size)
+        idxy = num_bins // 2 + int(y // bin_size)
         
         # Increase by 1 the given position of hist:
         
