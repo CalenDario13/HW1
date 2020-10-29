@@ -125,7 +125,7 @@ def rg_hist(img_color_double, num_bins):
         
         # Get the pixels:
         R = flat[i][0]
-        G = flat[i][2]
+        G = flat[i][1]
         
         #Find the bin:
         idxr = int(R // bin_size)
