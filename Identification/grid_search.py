@@ -11,6 +11,8 @@ from hyperopt import Trials
 from hyperopt import fmin
 from hyperopt import SparkTrials
 
+import mlflow
+
 # Load Pictures:
 global model_images, query_images
 
@@ -81,17 +83,15 @@ def objective(param):
 
 global  ITERATION
 ITERATION = 0
-MAX_EVALS = 200
+MAX_EVALS = 100
 
 tpe_algorithm = tpe.suggest
 bayes_trials = Trials()
 
-
-spark_trials = SparkTrials(parallelism= 12)
-best = fmin(fn = objective, space = param_grid, algo = tpe_algorithm, 
-            max_evals = MAX_EVALS, trials = bayes_trials, rstate = np.random.RandomState(50))
-
-
+spark_trials = SparkTrials(parallelism= 6)
+with mlflow.start_run():
+    best = fmin(fn = objective, space = param_grid, algo = tpe_algorithm, 
+                max_evals = MAX_EVALS, trials = spark_trials, rstate = np.random.RandomState(50))
     
 
 
