@@ -1,6 +1,5 @@
 import numpy as np
 
-
 #Add the Filtering folder, to import the gauss_module.py file, where gaussderiv is defined (needed for dxdy_hist)
 import sys, os, inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -16,36 +15,24 @@ import gauss_module
 #
 #  img_gray - input image in grayscale format
 #  num_bins - number of bins in the histogram
+
 def normalized_hist(img_gray, num_bins):
     
     assert len(img_gray.shape) == 2, 'image dimension mismatch'
     assert img_gray.dtype == 'float', 'incorrect image type'
     
-    # Prepare the variables:
-    space = np.linspace(0, 255, num_bins + 1)
-    to_array = img_gray.reshape(img_gray.size)
+    bin_size = len(range(0,256)) / num_bins
+    flat = img_gray.reshape(-1)
+    hists = np.zeros(num_bins)
+    bins = np.linspace(0, 256, num_bins +1)
     
-    # Do the binning:         
-    binning = np.digitize(to_array, space)
-    img_binned = space[binning]
-    
-    # Create the histogram.
-    bins, hists = np.unique(img_binned, return_counts=True)
-
-    # Add the bins that count 0:
-    missing_bins = np.setdiff1d(space, bins)
-    missing_hists = np.zeros(missing_bins.shape)
-    
-    bins = np.concatenate((bins, missing_bins))
-    hists = np.concatenate((hists, missing_hists))
+    for px in flat:
         
-    idx = bins.argsort()
-    bins = bins[idx]
-    hists = hists[idx]
-    hists = hists[1:]
-    
-    # Normalization:
-    hists = (1/np.sum(hists)) * hists
+        i = int(px // bin_size)
+        hists[i] += 1
+        
+    hists = 1/np.sum(hists) * hists
+        
     
     return hists, bins
 
@@ -61,6 +48,7 @@ def normalized_hist(img_gray, num_bins):
 #       - their R values fall in bin 0
 #       - their G values fall in bin 9
 #       - their B values fall in bin 5
+
 def rgb_hist(img_color_double, num_bins):
     
     assert len(img_color_double.shape) == 3, 'image dimension mismatch'
@@ -107,8 +95,9 @@ def rgb_hist(img_color_double, num_bins):
 #  E.g. hists[0,9] contains the number of image_color pixels such that:
 #       - their R values fall in bin 0
 #       - their G values fall in bin 9
+
 def rg_hist(img_color_double, num_bins):
-    
+
     assert len(img_color_double.shape) == 3, 'image dimension mismatch'
     assert img_color_double.dtype == 'float', 'incorrect image type'
     
@@ -149,6 +138,7 @@ def rg_hist(img_color_double, num_bins):
 #  num_bins - number of bins used to discretize each dimension, total number of bins in the histogram should be num_bins^2
 #
 #  Note: you may use the function gaussderiv from the Filtering exercise (gauss_module.py)
+
 def dxdy_hist(img_gray, num_bins):
     
     assert len(img_gray.shape) == 2, 'image dimension mismatch'
@@ -205,7 +195,7 @@ def is_grayvalue_hist(hist_name):
 
 def get_hist_by_name(img, num_bins_gray, hist_name):
   if hist_name == 'grayvalue':
-    return normalized_hist(img, num_bins_gray)
+    return normalized_hist(img, num_bins_gray)[0]
   elif hist_name == 'rgb':
     return rgb_hist(img, num_bins_gray)
   elif hist_name == 'rg':
