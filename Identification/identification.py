@@ -24,7 +24,7 @@ def rgb2gray(rgb):
 img_color = np.array(Image.open('./model/obj100__0.png'))
 img_gray = rgb2gray(img_color.astype('double'))
 
-plt.figure(1, figsize=(22,10))
+plt.figure(1, figsize=(17,8))
 plt.subplot(1,3,1)
 plt.imshow(img_color)
 
@@ -39,8 +39,8 @@ plt.bar((bin_gray2[0:-1] + bin_gray2[1:])/2, hist_gray2)
 plt.show()
 
 
-
 ## more histograms (Question 2.b)
+
 
 #Compose and test RGB histograms (histogram_module.rgb_hist)
 plt.figure(2)
@@ -50,7 +50,7 @@ plt.imshow(img_color)
 num_bins_color = 5
 plt.subplot(1,2,2)
 hist_rgb = histogram_module.rgb_hist(img_color.astype('double'), num_bins_color)
-plt.bar(np.array(range(1,hist_rgb.size+1)),hist_rgb)
+plt.bar(np.array(range(1,hist_rgb.size+1)), hist_rgb)
 plt.show()
 
 #Compose and test RG histograms (histogram_module.rg_hist)
@@ -74,7 +74,6 @@ plt.subplot(1,2,2)
 hist_dxdy = histogram_module.dxdy_hist(img_gray, num_bins_dxdy)
 plt.bar(np.array(range(1,hist_dxdy.size+1)),hist_dxdy)
 plt.show()
-
 
 
 ## Distance functions (Question 2.c)
@@ -166,7 +165,8 @@ query_images = [x.strip() for x in query_images]
 
 dist_type = 'intersect';
 hist_type = 'rg';
-num_bins = 30;
+num_bins = 10;
+
 
 [best_match, D] = match_module.find_best_match(model_images, query_images, dist_type, hist_type, num_bins)
 

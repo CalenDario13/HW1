@@ -21,9 +21,9 @@ def normalized_hist(img_gray, num_bins):
     assert len(img_gray.shape) == 2, 'image dimension mismatch'
     assert img_gray.dtype == 'float', 'incorrect image type'
     
-    bin_size = len(range(0,256)) / num_bins
+    bin_size = 255 / num_bins
     flat = img_gray.reshape(-1)
-    hists = np.zeros(num_bins)
+    hists = np.zeros(num_bins, dtype=int)
     bins = np.linspace(0, 256, num_bins +1)
     
     for px in flat:
@@ -33,7 +33,6 @@ def normalized_hist(img_gray, num_bins):
         
     hists = 1/np.sum(hists) * hists
         
-    
     return hists, bins
 
 
